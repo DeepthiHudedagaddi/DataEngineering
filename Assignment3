@@ -1,0 +1,6 @@
+Question 1
+==============
+-Create a bucket in storage.
+-In google SDK, 
+a. gcloud beta auth application-default login
+b. gcloud beta interactive(To go to interactive shell)
