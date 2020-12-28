@@ -28,7 +28,10 @@ Reading CSV using Python
 ------------------------
 -Create a service account for the bucket and download the JSON.
 
-import pandas as pd
-from io import BytesIO
 from google.cloud import storage
-storage_client = storage.Client()
+import google.cloud.storage
+import json
+import os
+import sys
+PATH = os.path.join(os.getcwd() , 'assignment3-299918-e547fe7a3a85.json')
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = PATH
