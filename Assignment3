@@ -23,3 +23,7 @@ Or
 
 In bucket page, use UI to import CSV.
 URL of my data: https://storage.cloud.google.com/dph_assignment_3/movie_data.csv
+
+Reading CSV using Python
+------------------------
+-Create a service account for the bucket and download the JSON.
