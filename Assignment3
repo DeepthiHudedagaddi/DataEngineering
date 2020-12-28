@@ -4,3 +4,22 @@ Question 1
 -In google SDK, 
 a. gcloud beta auth application-default login
 b. gcloud beta interactive(To go to interactive shell)
+Or activate google cloudshell and give ipython
+This code can be used to import csv
+from googleapiclient import discovery
+from oauth2client.client import GoogleCredentials
+
+credentials = GoogleCredentials.get_application_default()
+service = discovery.build('storage', 'v1', credentials=credentials)
+
+filename = 'C:\\MyFiles\\sample.csv'
+bucket = 'my_bucket'
+
+body = {'name': 'dest_file_name.csv'}
+req = service.objects().insert(bucket=bucket, body=body, media_body=filename)
+resp = req.execute()
+
+Or
+
+In bucket page, use UI to import CSV.
+URL of my data: https://storage.cloud.google.com/dph_assignment_3/movie_data.csv
