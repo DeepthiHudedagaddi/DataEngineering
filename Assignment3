@@ -48,3 +48,18 @@ df=pd.read_csv(s)
 print(df)
 
 Output is saved as Question1.png
+
+=================================================================================================
+
+Question 2
+
+Code:
+--------
+
+import pandas as pd
+df=pd.read_parquet("gs://dph_assignment_3/userdata5.parquet")
+print(df)
+
+Output is saved as Question2.png
+
+===================================================================================================
