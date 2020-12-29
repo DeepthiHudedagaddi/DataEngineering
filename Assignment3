@@ -46,3 +46,5 @@ from io import BytesIO
 s = BytesIO(bt)
 df=pd.read_csv(s)
 print(df)
+
+Output is saved as Question1.png
