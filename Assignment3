@@ -28,10 +28,30 @@ Reading CSV using Python
 ------------------------
 -Create a service account for the bucket and download the JSON.
 
-from google.cloud import storage
-import google.cloud.storage
-import json
-import os
 import sys
-PATH = os.path.join(os.getcwd() , 'assignment3-299918-e547fe7a3a85.json')
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = PATH
+
+import csv
+
+import datetime
+
+import pandas as pd
+
+import gcsfs
+
+from google.cloud import storage
+
+storage_client = storage.Client()
+
+bucket = storage_client.get_bucket('dph_assignment_3')
+
+blob = bucket.blob('movie_data.csv')
+
+bt = blob.download_as_string()
+
+from io import StringIO
+
+s = StringIO("utf-8",bt)
+
+df=pd.read_csv(s)
+
+print(df)
