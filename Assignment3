@@ -1,4 +1,4 @@
-Question 1
+Question 1 : 1) Read a csv file from gcp cloud storage and view the contents using python.
 ==============
 -Create a bucket in storage.
 -In google SDK, 
@@ -28,30 +28,21 @@ Reading CSV using Python
 ------------------------
 -Create a service account for the bucket and download the JSON.
 
+
 import sys
-
 import csv
-
 import datetime
-
 import pandas as pd
-
 import gcsfs
 
 from google.cloud import storage
 
 storage_client = storage.Client()
-
 bucket = storage_client.get_bucket('dph_assignment_3')
-
 blob = bucket.blob('movie_data.csv')
-
 bt = blob.download_as_string()
 
-from io import StringIO
-
-s = StringIO("utf-8",bt)
-
+from io import BytesIO
+s = BytesIO(bt)
 df=pd.read_csv(s)
-
 print(df)
