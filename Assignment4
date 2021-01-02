@@ -21,14 +21,6 @@ Q1 Part A :
   
   Write in Paraquet format
   
-  Procedure:
-Create an external table in Hive pointing to your existing zipped CSV file.
-Create another Hive table in parquet format
-Insert overwrite parquet table with Hive table
-Put all the above queries in a script and submit as a job.
-
-Create a Job in the bucket with the query.
-
 Specifying the Cloud Storage bucket
 ...................................
 def get(self):
@@ -108,3 +100,16 @@ from io import BytesIO
 s = BytesIO(bt)
 df=pd.read_csv(s)
 print(df)
+
+Q2 and 3
+----------------
+
+Submitting a job
+
+  Procedure:
+Create an external table in Hive pointing to your existing zipped CSV file.
+Create another Hive table in parquet format
+Insert overwrite parquet table with Hive table
+Put all the above queries in a script and submit as a job.
+
+Create a Job in the bucket with the query.
