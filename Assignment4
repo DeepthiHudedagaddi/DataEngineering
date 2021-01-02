@@ -113,3 +113,5 @@ Insert overwrite parquet table with Hive table
 Put all the above queries in a script and submit as a job.
 
 Create a Job in the bucket with the query.
+
+Big Data -> Dataproc -> Jobs and click on Submit Job
