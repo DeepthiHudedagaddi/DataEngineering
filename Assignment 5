@@ -5,3 +5,94 @@ Refer image Assignment5_1.png
 
 ===================================================================================================================================================================
 2. Create a python script which will run as a job in the data pipeline. The python script will read data from the nosql db and clean the data - remove null values from all columns, remove duplicate entries. The cleaned data is then written into parquet or orc file (alternatively can write to a json file).
+
+Solution
+-------
+
+Verify if BigQuery, Compute Engine, Dataproc, Composer and Google Cloud Storage APIs  are enabled.
+
+For Google cloud composer creation, refer Assignment5_2CloudComposer.png
+
+In the Cloud Shell create the environment with the gcloud command. Note the env-variables takes a list of Variables that will be available to all DAGs in this environment. 
+
+gcloud composer environments create demo-ephemeral-dataproc1 \
+--location us-central1 \
+--zone us-central1-b \
+--machine-type n1-standard-2 \
+--disk-size 20 
+# Set Airflow Variables in the Composer Environment we just created.
+gcloud composer environments run \
+demo-ephemeral-dataproc1 \
+--location=us-central1 variables -- \
+--set gcp_project $PROJECT
+gcloud composer environments run demo-ephemeral-dataproc1 \
+--location=us-central1 variables -- \
+--set gce_zone us-central1-b
+gcloud composer environments run demo-ephemeral-dataproc1 \
+--location=us-central1 variables -- \
+--set gcs_bucket $PROJECT
+gcloud composer environments run demo-ephemeral-dataproc1 \
+--location=us-central1 variables -- \
+--set bq_output_table $PROJECT:ComposerDemo.nyc_tlc_yellow_trips
+gcloud composer environments run demo-ephemeral-dataproc1 \
+--location=us-central1 variables -- \
+--set dataproc_bucket $PROJECT-dataproc-staging
+
+Check DAG folder for composer environment.
+
+Refer Assignment5_2DAG.png
+
+get the latest python script for making IAP requests and install it’s requirements.
+
+# Install necessary requirements for making iap requests with
+# dag_trigger.py
+(curl https://raw.githubusercontent.com/GoogleCloudPlatform/python-docs-samples/master/iap/requirements.txt; echo 'tzlocal>=1.5.1') >> ~/professional-services/examples/cloud-composer-examples/composer_http_post_example/iap_requirements.txt
+# Get latest version of make_iap_request from python-docs-samples.
+curl https://raw.githubusercontent.com/GoogleCloudPlatform/python-docs-samples/master/iap/make_iap_request.py >> ~/professional-services/examples/cloud-composer-examples/composer_http_post_example/make_iap_request.py
+
+create a service account facilitate triggering your DAG by a POST to an endpoint.
+
+gcloud iam service-accounts create dag-trigger
+# Give service account permissions to create tokens for 
+# iap requests.
+gcloud projects add-iam-policy-binding $PROJECT \
+--member \
+serviceAccount:dag-trigger@$PROJECT.iam.gserviceaccount.com \
+--role roles/iam.serviceAccountTokenCreator
+gcloud projects add-iam-policy-binding $PROJECT \
+--member \
+serviceAccount:dag-trigger@$PROJECT.iam.gserviceaccount.com \
+--role roles/iam.serviceAccountActor
+# Service account also needs to be authorized to use Composer.
+gcloud projects add-iam-policy-binding $PROJECT \
+--member \
+serviceAccount:dag-trigger@$PROJECT.iam.gserviceaccount.com \
+--role roles/composer.user
+# We need a service account key to trigger the dag.
+gcloud iam service-accounts keys create ~/$PROJECT-dag-trigger-key.json \
+--iam-account=dag-trigger@$PROJECT.iam.gserviceaccount.com
+export GOOGLE_APPLICATION_CREDENTIALS=~/$PROJECT-dag-trigger-key.json
+
+Triggering DAG
+
+cd professional-services/examples/cloud-composer-example
+# Here you set up the python environment.
+# Pip is a tool, similar to maven in the java world
+pip install — upgrade virtualenv
+pip install -U pip
+virtualenv composer-env
+source composer-env/bin/activate
+# By default one of Airflow's dependencies installs a GPL dependency
+#(unidecode). To avoid this dependency set
+# SLUGIFY_USES_TEXT_UNIDECODE=yes in your environment when you
+# install or upgrade Airflow.
+export SLUGIFY_USES_TEXT_UNIDECODE=yes
+# Install requirements for this and other examples in 
+# cloud-composer-examples
+pip install -r requirements.txt
+# Required for dag_trigger.py
+pip install -r iap_requirements.txt
+# (Optional for testing spark code locally).
+# pip install pyspark>=2.3.1
+
+Find the url of your Airflow API for this DAG and the client id for airflow.
