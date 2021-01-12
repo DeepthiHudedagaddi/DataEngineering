@@ -1,0 +1,44 @@
+A short writeup on  data quality issues that you have encountered in real world data and how they fit onto the data quality dimensions.
+==========================================================================================================================================
+
+As the old school says, larger the quantity, lesser the quality. This world is producing enormous data every second. And data is one thing whose quality cannot be compromised.
+Though the quantity is large, it is of utmost importance to have the best quality of it.
+
+Earlier, cleaning data was a tedious and time-taking process. With Google Cloud DataPrep by Trifacta, this has become a easier process. This has helped to achieve the quality metrics of
+data such as
+-accuracy : Checks if it has the right information
+-timeliness : Checks if it is updated on time
+-completeness : Checks if all values/specifics are present
+-consistency : Checks if consistent across schema
+-duplication : Removes duplicates and hence reduces size
+-integrity : Checks if it suits the business model.
+
+All this, can be done without any coding using DataPrep. 
+
+DataPrep provides a very userfriendly UI.
+
+Though I have not seen significant data quality issues in real world myself, I have seen it through a web series(Scam 1992) and hence would like to write about it.
+
+It's in the non-digital era(1992) that banks provided bank receipts(BRs) and the broker had 10 days of time to return it with the profits. In the series, we see a person using this 
+10days to his benefit(basically loophole in the system) and uses public money for his selfish needs.
+
+Data quality dimensions that I see here is that,
+-Data not being consistent with RBI records and the banks.
+-Data not being timely updated.
+-Another possibilty could be mismatch in dates.
+-Data integrity is lost as it is not as per the business requirement.
+-Data completeness is absent as the amount is missing for 10 days.
+
+P.S: The series I mentioned is about stock markets.
+
+In this digital era, there are millions of transactions happening every second and data quality plays an important role. If there was a data quality/data cleaning tool in 1992, this scam
+could have been avoided.
+
+I have tried GCP DataPrep with my movie_lens data and I found ot having a very friendly UI and very easy to do the quality checks on data. It also provides suggestions
+on how to clean our data. Though my movie_data is of pretty good quality,  I have understood the working of DataPrep by reading and seeing the videos shared in the course material.
+
+I have imported movie_data, created a recipe to have movies of duration >100min. Made a jpb of it and ran it and saved the output back in GCS. 
+
+It was a cakewalk :)
+
+I have attached the screeshots in the sequence of above mentioned events ad DataPrep_1 to DataPrep_9.
