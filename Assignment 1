@@ -1,0 +1,176 @@
+Q1. Using RDBMS
+===================
+- Create Mysql instance
+- Connect to MYSQL on GCP.
+      gcloud sql connect movielens --user=root
+- mysql> USE movielens
+- Combine data in various tables in movielens dataset and genterate a table(.csv)
+- Upload .csv to cloud datastore
+- Queries
+1. select userid, count(movieid) from ratings
+    ->  where
+    ->         datetime >= date_add('2017-01-01', interval  -WEEKDAY('2017-01-01')-1 day) and
+    ->         datetime <= date_add(date_add('2017-01-01', interval  -WEEKDAY('2017-01-01')-1 day), interval 6 day)
+    ->         group by userid;
+    +--------+----------------+
+| userid | count(movieid) |
++--------+----------------+
+|    321 |              2 |
+|   1035 |              5 |
+|   1383 |              2 |
+|   1507 |              8 |
+|   1880 |              3 |
+|   1933 |              3 |
+|   2025 |              2 |
+|   2205 |              1 |
+|   2242 |              1 |
+|   2419 |              1 |
+|   2745 |              3 |
+|   2768 |             13 |
+|   2867 |             10 |
+|   3010 |              4 |
+| 281975 |              2 |
+| 282119 |              4 |
+| 282203 |              2 |
+| 282374 |              2 |
+
+Number of movies per genre
+
+    mysql>  SELECT  count(a.movieId), c.genre_name  from  movies a, movie_genre b, genre c
+    -> where a.movieId = b.movieId
+    -> AND b.genre_id = c.genre_id
+    -> group by c.genre_id;
++------------------+--------------+
+| count(a.movieId) | genre_name   |
++------------------+--------------+
+      |       6821 | Action
+   |          3863 | Adventure
+   |          2590 | Animation
+    |         2673 | Children
+      |      15198 | Comedy
+       |      4808 | Crime
+    |         7815 | Thriller
+     |        7071 | Romance
+     |        2502 | Fantasy
+ |            4884 | Documentary
+       |     22896 | Drama
+   |           333 | Film-Noir
+      |       5275 | Horror
+     |        1030 | Musical
+     |        2624 | Mystery
+      |       3272 | Sci-Fi
+         |    1715 | War
+     |        1314 | Western
+        |     4223 | Null
++------------------+--------------+
+19 rows in set (0.47 sec)
+mysql> end
+
+C. Number of viewers per movie genre - Wrote a stored procedure. The query inside the SP is listed below:
+
+ 
+Call getUsersGenre();
+    
+SELECT  count(a.userId) as "Count of Users", c.genre_name  as "Genre Name"
+from  genre c, movie_genre b, ratings a
+where
+b.movieId = a.movieId
+AND b.genre_id = c.genre_id
+group by c.genre_id
+order by count(a.userId) desc;
+
+ +----------------+--------------+
+| Count of Users | Genre Name   |
++----------------+--------------+
+       |   38876 | Drama
+      |    30928 | Comedy
+      |    26327 | Action
+    |      24361 | Thriller
+   |       19893 | Adventure
+     |     16277 | Romance
+      |    15418 | Sci-Fi
+       |   14831 | Crime
+     |      9535 | Fantasy
+      |     7043 | Horror
+    |       6927 | Children
+     |      6762 | Mystery
+   |        5311 | Animation
+         |  4432 | War
+     |      3178 | Musical
+     |      1638 | Western
+ |           971 | Documentary
+   |         894 | Film-Noir
+        |     52 | Null
++----------------+--------------+
+19 rows in set (0.65 sec)
+
+D. Time interval when the number of movies streamed is maximum - Wrote a stored procedure. The query inside the SP is listed below:
+
+Call maxMovieWeek()
+#Created a new table ratingsweek and inserted rows as below:
+
+insert into ratingsWeek
+        select count(rating), concat(year(datetime),week(datetime))
+         from ratings
+         group by concat(year(datetime),week(datetime));
+
+select countWeek as "Count of Movies Watched", yearWeek as "Year and Week"
+from ratingsWeek
+order by countWeek
+desc limit 10;
+
+
+mysql> Call maxMovieWeek();
++-------------------------+---------------+
+| Count of Movies Watched | Year and Week |
++-------------------------+---------------+
+|                  248791 |        200047 |
+|                  208458 |        199950 |
+|                  187658 |        200512 |
+|                  108269 |        200843 |
+|                  101968 |        199940 |
+|                   96333 |        201544 |
+|                   93650 |        200513 |
+|                   93548 |        200031 |
+|                   82529 |        201533 |
+|                   80380 |        199939 |
++-------------------------+---------------+
+10 rows in set (0.20 sec)
+Query OK, 0 rows affected (0.20 sec)
+
+============================================================================================
+
+Q2. Using GCP Datastore
+
+Create a firestore in datastore mode.
+Create entities using the console
+to load data into the entities use the following code: follow the instructions given in the link https://cloud.google.com/datastore/docs/reference/libraries#command-line
+from google.cloud import datastore
+
+Create, populate and persist an entity with keyID=1234
+key = client.key('movies', 1234)
+entity = datastore.Entity(key=key)
+entity.update({
+		"movieId" : 2,
+		"title" : u'Jumanji',
+		"releaseyear" : 1995,
+		"rating" : 4,
+		"datetime" : u'2018-03-26 21:51:45',
+		"unixtimestamp" : 1522101105,
+		"userId" : 14,
+		"genre_id" : 2
+})
+client.put(entity)
+result = client.get(key)
+print(result)
+add multiple values
+
+query the datastore
+query = client.query(kind="movies")
+query.add_filter("name", "=", Jumanji)
+query.add_filter("releaseyear", "=", 2007)
+
+query = client.query(kind="movies") query.add_filter("Genre", "=", Fantasy)
+| 282405 |             24 |
+| 282421 |              4 |
+| 283117 |              1 |
