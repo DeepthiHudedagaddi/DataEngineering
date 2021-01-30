@@ -1,3 +1,33 @@
 1. Data Import into Big Query from Sql
 
   Refer Assignment2_1.png
+  
+2. Data Import from public dataset
+
+  Refer Assignment2_2.png
+  
+Queries
+-------------
+
+Find the number of trips starting from 01-Jan-2015 to 31-Jan-2015 with less than 5 passengers in the taxi:
+
+SELECT COUNT(*) trips FROM compact-cell-290609.NewYorkCityTaxi.tlc_green_trips_2015 WHERE pickup_datetime BETWEEN ("2015-01-01 00:00:00") AND ("2015-01-31 23:59:59") AND passenger_count < 5
+
+Query results for the above query are as follows:
+
+Query complete (2.4 sec elapsed, 293.5 MB processed)
+
+row	trips
+1	1421052
+
+*****************************
+
+SELECT COUNT(*) trips FROM compact-cell-290609.NewYorkCityTaxi.tlc_green_trips_2015_clustered WHERE pickup_datetime BETWEEN ("2015-01-01 00:00:00") AND ("2015-01-31 23:59:59") AND passenger_count < 5
+
+Query results for the above query are as follows:
+
+Query complete (0.3 sec elapsed, 23 MB processed)
+
+row	trips
+1	1421052
+
