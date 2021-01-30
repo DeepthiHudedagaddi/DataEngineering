@@ -174,3 +174,5 @@ query = client.query(kind="movies") query.add_filter("Genre", "=", Fantasy)
 | 282405 |             24 |
 | 282421 |              4 |
 | 283117 |              1 |
+
+Data scrrenshot as Assignment1.png
